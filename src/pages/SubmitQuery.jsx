@@ -4,21 +4,39 @@ function SubmitQuery() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [question, setQuestion] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log({
-      name,
-      email,
-      question,
-    });
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/queries`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          student_name: name,
+          email: email,
+          question: question,
+        }),
+      });
 
-    alert("Query submitted successfully!");
+      const data = await response.json();
 
-    setName("");
-    setEmail("");
-    setQuestion("");
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to submit query");
+      }
+
+      setMessage("Query submitted successfully!");
+
+      setName("");
+      setEmail("");
+      setQuestion("");
+    } catch (error) {
+      console.error("Error submitting query:", error);
+      setMessage("Failed to submit query.");
+    }
   };
 
   return (
@@ -70,6 +88,8 @@ function SubmitQuery() {
 
         <button type="submit">Submit Query</button>
       </form>
+
+      {message && <p>{message}</p>}
     </div>
   );
 }

@@ -1,77 +1,40 @@
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-function SubmitQuery() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [question, setQuestion] = useState("");
+function Navbar() {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    console.log({
-      name,
-      email,
-      question,
-    });
-
-    alert("Query submitted successfully!");
-
-    setName("");
-    setEmail("");
-    setQuestion("");
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   return (
-    <div>
-      <h1>Submit Query</h1>
+    <nav className="navbar">
+      <div className="navbar-logo">
+        <Link to="/">NotifyHub</Link>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Student Name</label>
-          <br />
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your name"
-            required
-          />
-        </div>
+      <div className="navbar-links">
+        <Link to="/">Home</Link>
+        <Link to="/announcements">Announcements</Link>
+        <Link to="/events">Events</Link>
+        <Link to="/query">Submit Query</Link>
 
-        <br />
+        {token ? (
+          <>
+            <Link to="/admin">Dashboard</Link>
 
-        <div>
-          <label>Email</label>
-          <br />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-          />
-        </div>
-
-        <br />
-
-        <div>
-          <label>Question</label>
-          <br />
-          <textarea
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Enter your question"
-            rows="5"
-            required
-          />
-        </div>
-
-        <br />
-
-        <button type="submit">Submit Query</button>
-      </form>
-    </div>
+            <button onClick={handleLogout} className="logout-btn">
+              Logout
+            </button>
+          </>
+        ) : (
+          <Link to="/login">Admin Login</Link>
+        )}
+      </div>
+    </nav>
   );
 }
 
-export default SubmitQuery;
+export default Navbar;
